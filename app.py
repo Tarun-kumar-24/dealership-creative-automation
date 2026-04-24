@@ -221,7 +221,7 @@ def create_image(bg_path, panel_path, logo_path, output_path, size):
     # ---------------- PANEL FIX (NO OVERFLOW) ----------------
     panel = Image.open(panel_path).convert("RGBA")
 
-    max_panel_h = int(h * 0.32)   # 🔥 safe zone (important)
+    max_panel_h = int(h * 0.32) 
 
     ratio = min(w / panel.width, max_panel_h / panel.height)
 
@@ -389,7 +389,6 @@ def generate():
     return send_file(zip_path, as_attachment=True)
 
 
-# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
 

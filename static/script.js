@@ -132,7 +132,7 @@ async function saveSelection() {
     });
     
     if (res.ok) {
-        document.getElementById('selectionStatus').innerHTML = `✅ Saved: <strong>${selectedLogo}</strong> + <strong>${selectedPanel}</strong>`;
+        document.getElementById('selectionStatus').innerHTML = ` Saved: <strong>${selectedLogo}</strong> + <strong>${selectedPanel}</strong>`;
     } else {
         alert('Error saving selection');
     }
