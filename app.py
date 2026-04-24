@@ -7,10 +7,10 @@ import random
 
 app = Flask(__name__)
 
-# 🔥 BASE PATH (correct path laga)
+#  BASE PATH (correct path laga)
 BASE_PANEL_PATH = r"C:\Users\TARUN KANTIWAL\Desktop\AI-Automation\Project\static\assets\Dealership-panels"
 
-# 🔥 account mapping
+# account mapping
 account_map = {
     "1": "Tata-dealers",
     "2": "VW-dealers"
@@ -273,13 +273,13 @@ def generate():
     print("Dealers:", dealers)
 
     if not file:
-        return "No background uploaded ❌", 400
+        return "No background uploaded ", 400
 
     if not account:
-        return "Account missing ❌", 400
+        return "Account missing ", 400
 
     if not dealers:
-        return "No dealers selected ❌", 400
+        return "No dealers selected ", 400
 
     bg_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(bg_path)
@@ -290,20 +290,20 @@ def generate():
     company_folder = account_map.get(str(account))
 
     if not company_folder:
-        return "Invalid account ❌", 400
+        return "Invalid account ", 400
 
     db = get_db()
 
     for dealer in dealers:
 
-        # 🔥 ID → NAME
+        #  ID → NAME
         row = db.execute(
             "SELECT name FROM dealerships WHERE id=?",
             (dealer,)
         ).fetchone()
 
         if not row:
-            print("❌ Dealer not in DB:", dealer)
+            print(" Dealer not in DB:", dealer)
             continue
 
         dealer_name = row[0]
@@ -314,7 +314,7 @@ def generate():
         print("Folder:", dealer_folder)
 
         if not os.path.exists(dealer_folder):
-            print("❌ Folder not found:", dealer_folder)
+            print(" Folder not found:", dealer_folder)
             continue
 
         # -------- GET DEALER SELECTIONS OR AUTO-SELECT --------
@@ -348,7 +348,7 @@ def generate():
             ]
             
             if not templates:
-                print("❌ No templates found in folder")
+                print(" No templates found in folder")
                 continue
             
             selected_panel = templates[0]
@@ -358,14 +358,14 @@ def generate():
         logo_path = os.path.join(dealer_folder, selected_logo)
 
         if not os.path.exists(logo_path):
-            print("❌ Logo not found:", logo_path)
+            print(" Logo not found:", logo_path)
             continue
 
         # -------- PANEL --------
         panel_path = os.path.join(dealer_folder, selected_panel)
 
         if not os.path.exists(panel_path):
-            print("❌ Panel not found:", panel_path)
+            print(" Panel not found:", panel_path)
             continue
 
         # -------- GENERATE --------
@@ -377,7 +377,7 @@ def generate():
             output_files.append(output_path)
 
     if not output_files:
-        return "No images generated ❌ (check folders/files)", 400
+        return "No images generated  (check folders/files)", 400
 
     # -------- ZIP --------
     zip_path = os.path.join(OUTPUT_FOLDER, "result.zip")
@@ -393,159 +393,3 @@ def generate():
 if __name__ == "__main__":
     app.run(debug=True)
 
-    # from flask import Flask, render_template, request, jsonify, send_file
-    # import sqlite3
-    # import os
-    # from PIL import Image
-    # import zipfile
-
-    # app = Flask(__name__)
-
-    # # folders
-    # UPLOAD_FOLDER = "uploads"
-    # OUTPUT_FOLDER = "outputs"
-
-    # os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-    # os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-
-    # # ---------------- DB ----------------
-    # def get_db():
-    #     conn = sqlite3.connect("database.db")
-    #     return conn
-
-
-    # # ---------------- ROUTES ----------------
-    # @app.route("/")
-    # def home():
-    #     return render_template("index.html")
-
-
-    # @app.route("/accounts")
-    # def accounts():
-    #     db = get_db()
-    #     rows = db.execute("SELECT * FROM accounts").fetchall()
-    #     return jsonify([{"id": r[0], "name": r[1]} for r in rows])
-
-
-    # @app.route("/dealers/<int:account_id>")
-    # def dealers(account_id):
-    #     db = get_db()
-    #     rows = db.execute(
-    #         "SELECT * FROM dealerships WHERE account_id=?",
-    #         (account_id,)
-    #     ).fetchall()
-
-    #     return jsonify([{"id": r[0], "name": r[1]} for r in rows])
-
-
-    # # ---------------- IMAGE LOGIC ----------------
-    # def resize_cover(img, target_size):
-    #     target_w, target_h = target_size
-    #     img_ratio = img.width / img.height
-    #     target_ratio = target_w / target_h
-
-    #     if img_ratio > target_ratio:
-    #         new_height = target_h
-    #         new_width = int(new_height * img_ratio)
-    #     else:
-    #         new_width = target_w
-    #         new_height = int(new_width / img_ratio)
-
-    #     img = img.resize((new_width, new_height))
-
-    #     left = (new_width - target_w) // 2
-    #     top = (new_height - target_h) // 2
-
-    #     return img.crop((left, top, left + target_w, top + target_h))
-
-
-    # def create_image(bg_path, panel_path, logo_path, output_path, size):
-    #     bg = Image.open(bg_path).convert("RGBA")
-
-    #     # background resize (cover)
-    #     bg = resize_cover(bg, size)
-
-    #     panel = Image.open(panel_path).convert("RGBA")
-
-    #     # consistent margin
-    #     margin = int(size[0] * 0)
-
-    #     # panel resize (85% width)
-    #     panel_width = int(size[0] * 0.99)
-    #     ratio = panel_width / panel.width
-    #     panel_height = int(panel.height * ratio)
-    #     panel = panel.resize((panel_width, panel_height))
-
-    #     # panel bottom center
-    #     x = (size[0] - panel_width) // 2
-    #     y = size[1] - panel_height - margin
-
-    #     bg.paste(panel, (x, y), panel)
-
-    #     # logo (top-right)
-    #     if logo_path:
-    #         logo = Image.open(logo_path).convert("RGBA")
-
-    #         logo_width = int(size[0] * 0.09)
-    #         r = logo_width / logo.width
-    #         logo_height = int(logo.height * r)
-    #         logo = logo.resize((logo_width, logo_height))
-    #         margin = int(size[0] * 0.018)
-
-    #         logo_x = size[0] - logo_width - margin
-    #         logo_y = int(size[1] * 0.008)
-
-    #         bg.paste(logo, (logo_x, logo_y), logo)
-
-    #     bg.save(output_path, quality=95)
-
-    # # ---------------- GENERATE ----------------
-    # @app.route("/generate", methods=["POST"])
-    # def generate():
-    #     file = request.files["background"]
-    #     dealers = request.form.getlist("dealers")
-    #     account = request.form.get("account")
-
-    #     # ✅ OPTIONAL LOGO LOGIC
-    #     use_logo = request.form.get("useLogo") == "true"
-
-    #     if use_logo:
-    #         if account == "1":
-    #             logo_path = "static/assets/logos/tata.png"
-    #         elif account == "2":
-    #             logo_path = "static/assets/logos/kia.png"
-    #         else:
-    #             logo_path = None
-    #     else:
-    #         logo_path = None
-
-    #     bg_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    #     file.save(bg_path)
-
-    #     sizes = [(1080,1080), (1080,1350), (1080,1920)]
-    #     output_files = []
-
-    #     for dealer in dealers:
-    #         panel_path = f"static/assets/panels/{dealer}.png"
-
-    #         for size in sizes:
-    #             filename = f"{dealer}_{size[0]}x{size[1]}.png"
-    #             output_path = os.path.join(OUTPUT_FOLDER, filename)
-
-    #             create_image(bg_path, panel_path, logo_path, output_path, size)
-
-    #             output_files.append(output_path)
-
-    #     # zip
-    #     zip_path = os.path.join(OUTPUT_FOLDER, "result.zip")
-    #     with zipfile.ZipFile(zip_path, "w") as zipf:
-    #         for f in output_files:
-    #             zipf.write(f, os.path.basename(f))
-
-    #     return send_file(zip_path, as_attachment=True)
-
-
-    # # ---------------- RUN ----------------
-    # if __name__ == "__main__":
-    #     app.run(debug=True)
